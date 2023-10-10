@@ -1,5 +1,7 @@
 import click
 from martingale import simulate
+from faker import Faker
+import plotly.graph_objects as go
 
 @click.command()
 @click.option('--balance', default=1000, help='Starting balance.')
@@ -8,34 +10,46 @@ from martingale import simulate
 @click.option('--limit', default=float('inf'), help='Upper limit balance.')
 @click.option('--stop', default=0, help='Stop loss value.')
 @click.option('--runs', default=100, help='Number of simulation runs.')
+@click.option('--graph', is_flag=True, help='If set, draw a graph.')
 
-def run_simulations(balance=1000, bet=1, iterations=100, limit=float('inf'), stop=0, runs=100):
-    """
-    This program runs the 'simulate' function multiple times and calculates the win/loss rate.
-    A win is considered when the final balance is more than the starting balance.
-    A loss is considered when the final balance is less than the starting balance.
-    It also calculates the net balance after all runs.
-    """
-    wins = 0
-    losses = 0
+def run_simulations(balance=1000, bet=1, iterations=100, limit=float('inf'), stop=0, runs=100, graph=False):
+    faker = Faker()
+    happy_people = 0
+    sad_people = 0
     net_balance = 0
+    final_balances = []  # list to store final balances
+    fig = go.Figure()  # initialize plotly figure
 
     for _ in range(runs):
-        result = simulate(balance, bet, iterations, limit, stop, graph=False)
+        name = faker.name()
+        result, balances, happy = simulate(balance, bet, iterations, limit, stop, graph)
+        final_balances.append(result)  # append final balance to the list
         net_balance += result - balance  # calculate net balance
 
-        if result > balance:
-            wins += 1
-        elif result < balance:
-            losses += 1
+        if happy:
+            happy_people += 1
+        else:
+            sad_people += 1
 
-    win_rate = wins / runs * 100
-    loss_rate = losses / runs * 100
+        if graph:
+            # add trace for each person
+            fig.add_trace(go.Scatter(
+                y=balances,
+                mode='lines',
+                name=name,
+                line=dict(color='green' if happy else 'red'),
+                hoverinfo='name'
+            ))
+
+    happy_rate = round(happy_people / runs * 100, 2)
     average_net_balance = net_balance / runs
 
-    print('Win rate: {}%, Loss rate: {}%'.format(win_rate, loss_rate))
+    print('Happy rate: {}%'.format(happy_rate))
     print('Net balance after all runs: {}'.format(net_balance))
     print('Average net balance per run: {}'.format(average_net_balance))
+
+    if graph:
+        fig.show()
 
 if __name__ == '__main__':
     run_simulations()

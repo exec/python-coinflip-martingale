@@ -1,5 +1,7 @@
 import random
-import matplotlib.pyplot as plt
+from faker import Faker
+import plotly.graph_objects as go
+from plotly.offline import plot
 
 def simulate(balance=1000, bet=1, iterations=100, limit=float('inf'), stop=0, graph=False):
     base_bet = bet
@@ -16,35 +18,27 @@ def simulate(balance=1000, bet=1, iterations=100, limit=float('inf'), stop=0, gr
             else:  # Win
                 balance += bet
                 bet = base_bet  # Return to base bet
-                break
 
-        balances.append(balance)
+            balances.append(balance)
+
+            # Stop if balance reaches the stop loss value or the upper limit
+            if balance <= stop:
+                print('Reached the stop loss value.')
+                return balance, balances, False
+            elif balance >= limit:
+                print('Reached the upper limit.')
+                return balance, balances, True
 
         # Print the iteration results
         print('Iteration: {}, Balance: {}, Bet: {}'.format(i+1, balance, bet))
 
-        # Stop if balance reaches the stop loss value or the upper limit
-        if balance <= stop:
-            print('Balance reached the stop loss value.')
-            break
-        elif balance >= limit:
-            print('Balance reached the upper limit.')
-            break
-
         # Reset bet to base bet if busted
         if bet > balance:
-            print("Busted with bet of", bet, "and money left", balance)
+            print("Busted with bet of {} and money left {}".format(bet, balance))
             bet = base_bet
 
-    # Draw a graph if specified
-    if graph:
-        plt.plot(balances)
-        plt.ylabel('Balance')
-        plt.xlabel('Iteration')
-        plt.show()
-
-    # Return final balance
-    return balance
+    # Return final balance, balances and whether the person left happy
+    return balance, balances, balance > stop
 
 if __name__ == '__main__':
     import click
@@ -58,6 +52,11 @@ if __name__ == '__main__':
     @click.option('--graph', is_flag=True, help='If set, draw a graph.')
     def cli(balance, bet, iterations, limit, stop, graph):
         """Simulates a number of coinflip scenarios following the martingale betting strategy to recover losses and reset on wins."""
-        return simulate(balance, bet, iterations, limit, stop, graph)
+
+        sim_result, balances, happy = simulate(balance, bet, iterations, limit, stop, graph)
+        print('Final balance: {}'.format(sim_result))
+        print('Profit: {}'.format(sim_result - balance))
+        print('Left happy: {}'.format(happy))
+        return sim_result, balances, happy
 
     cli()
