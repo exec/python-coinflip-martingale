@@ -47,8 +47,10 @@ Run `python <script name> --help` for more information.
 
 - Python 3
 - Click
-- Plotly (for graphing capability in `martingale.py` and `bulk_martingale.py`) 
+- Plotly (for graphing capability in `bulk_martingale.py`) 
 - Faker (for generating synthetic names in `bulk_martingale.py`)
+
+You can install the dependencies all at once by running `pip install -r requirements.txt`. If you get an error about being managed by the system package manager, try running `pip install --break-system-packages -r requirements.txt`. Be a chad and use a virtual environment for things like this, folks.
 
 ## Disclaimer
 
