@@ -50,8 +50,6 @@ Run `python <script name> --help` for more information.
 - Plotly (for graphing capability in `bulk_martingale.py`) 
 - Faker (for generating synthetic names in `bulk_martingale.py`)
 
-You can install the dependencies all at once by running `pip install -r requirements.txt`. If you get an error about being managed by the system package manager, try running `pip install --break-system-packages -r requirements.txt`. Be a chad and use a virtual environment for things like this, folks.
-
 ## Disclaimer
 
 This project is intended solely for educational and simulation purposes. The Martingale betting strategy inherently carries high risk and should not be applied for actual betting.
