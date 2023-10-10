@@ -1,5 +1,8 @@
 # python-coinflip-martingale
 
+![Martingale](img/martingale.png)
+![Bulk Martingale](img/bulk_martingale.png)
+
 This project contains two python scripts, `martingale.py` and `bulk_martingale.py`, that simulate the Martingale betting strategy on a simple coin flip game.
 
 ## martingale.py

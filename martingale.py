@@ -57,7 +57,7 @@ if __name__ == '__main__':
     @click.option('--stop', default=0, help='Stop loss value.')
     @click.option('--graph', is_flag=True, help='If set, draw a graph.')
     def cli(balance, bet, iterations, limit, stop, graph):
-        """Entry point for the CLI."""
+        """Simulates a number of coinflip scenarios following the martingale betting strategy to recover losses and reset on wins."""
         return simulate(balance, bet, iterations, limit, stop, graph)
 
     cli()
